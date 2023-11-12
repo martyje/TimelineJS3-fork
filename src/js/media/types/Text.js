@@ -1,93 +1,104 @@
-import { classMixin, setData, mergeData, htmlify, linkify, trace } from "../../core/Util"
-import Events from "../../core/Events"
-import * as DOM from "../../dom/DOM"
+import {
+    classMixin,
+    setData,
+    mergeData,
+    htmlify,
+    linkify,
+    trace,
+} from "../../core/Util";
+import Events from "../../core/Events";
+import * as DOM from "../../dom/DOM";
 
 export class Text {
-	constructor(data, options, add_to_container) {
+    constructor(data, options, add_to_container) {
+        this._el = {
+            // defaults
+            container: {},
+            content_container: {},
+            content: {},
+            headline_container: {},
+            headline: {},
+            date: {},
+        };
 
-		this._el = { // defaults
-			container: { },
-			content_container: { },
-			content: { },
-            headline_container: { },
-			headline: { },
-			date: { }
-		}
+        this.options = {
+            // defaults
+            title: false,
+        };
 
-		this.options = { // defaults
-			title: false
-		}
+        this.data = {
+            // defaults
+            unique_id: "",
+            headline: "headline",
+            text: "text",
+        };
 
-		this.data = { // defaults
-			unique_id: "",
-			headline: "headline",
-			text: "text"
-		}
+        setData(this, data); // override defaults
 
-		setData(this, data); // override defaults
+        // Merge Options
+        mergeData(this.options, options);
 
-		// Merge Options
-		mergeData(this.options, options);
+        this._el.container = DOM.create("div", "tl-text");
+        this._el.container.id = this.data.unique_id;
 
-		this._el.container = DOM.create("div", "tl-text");
-		this._el.container.id = this.data.unique_id;
+        this._initLayout();
 
-		this._initLayout();
+        if (add_to_container) {
+            add_to_container.appendChild(this._el.container);
+        }
+    }
 
-		if (add_to_container) {
-			add_to_container.appendChild(this._el.container);
-		};
-
-	}
-
-	/*	Adding, Hiding, Showing etc
+    /*	Adding, Hiding, Showing etc
 	================================================== */
-	show() {
+    show() {}
 
-	}
+    hide() {}
 
-	hide() {
+    addTo(container) {
+        container.appendChild(this._el.container);
+        //this.onAdd();
+    }
 
-	}
+    removeFrom(container) {
+        container.removeChild(this._el.container);
+    }
 
-	addTo(container) {
-		container.appendChild(this._el.container);
-		//this.onAdd();
-	}
+    headlineHeight() {
+        return this._el.headline.offsetHeight + 40;
+    }
 
-	removeFrom(container) {
-		container.removeChild(this._el.container);
-	}
+    addDateText(str) {
+        this._el.date.innerHTML = str;
+    }
 
-	headlineHeight() {
-		return this._el.headline.offsetHeight + 40;
-	}
-
-	addDateText(str) {
-		this._el.date.innerHTML = str;
-	}
-
-	/*	Events
+    /*	Events
 	================================================== */
-	onLoaded() {
-		this.fire("loaded", this.data);
-	}
+    onLoaded() {
+        this.fire("loaded", this.data);
+    }
 
-	onAdd() {
-		this.fire("added", this.data);
-	}
+    onAdd() {
+        this.fire("added", this.data);
+    }
 
-	onRemove() {
-		this.fire("removed", this.data);
-	}
+    onRemove() {
+        this.fire("removed", this.data);
+    }
 
-	/*	Private Methods
+    /*	Private Methods
 	================================================== */
-	_initLayout() {
-
-		// Create Layout
-		this._el.content_container = DOM.create("div", "tl-text-content-container", this._el.container);
-		this._el.headline_container = DOM.create("div", "tl-text-headline-container", this._el.content_container);
+    _initLayout() {
+        // Create Layout
+        this._el.content_container = DOM.create(
+            "div",
+            "tl-text-content-container",
+            this._el.container
+        );
+        this._el.headline_container = DOM.create(
+            "div",
+            "tl-text-headline-container",
+            this._el.content_container
+        );
 
         // Headline
         if (this.data.headline != "") {
@@ -95,26 +106,41 @@ export class Text {
             if (this.options.title) {
                 headline_class = "tl-headline tl-headline-title";
             }
-            this._el.headline = DOM.create("h2", headline_class, this._el.headline_container);
-            this._el.headline.innerHTML		= this.data.headline;
+            this._el.headline = DOM.create(
+                "h2",
+                headline_class,
+                this._el.headline_container
+            );
+            this._el.headline.id = "tl-headline-" + this.data.unique_id;
+            this._el.headline.innerHTML = this.data.headline;
         }
 
         // Date
-		this._el.date = DOM.create("h3", "tl-headline-date", this._el.headline_container);
+        this._el.date = DOM.create(
+            "h3",
+            "tl-headline-date",
+            this._el.headline_container
+        );
 
-		// Text
-		if (this.data.text != "") {
-			var text_content = "";
-			text_content += htmlify(this.options.autolink == true ? linkify(this.data.text) : this.data.text);
-			this._el.content				= DOM.create("div", "tl-text-content", this._el.content_container);
-			this._el.content.innerHTML		= text_content;
-		}
+        // Text
+        if (this.data.text != "") {
+            var text_content = "";
+            text_content += htmlify(
+                this.options.autolink == true
+                    ? linkify(this.data.text)
+                    : this.data.text
+            );
+            this._el.content = DOM.create(
+                "div",
+                "tl-text-content",
+                this._el.content_container
+            );
+            this._el.content.innerHTML = text_content;
+        }
 
-		// Fire event that the slide is loaded
-		this.onLoaded();
-
-	}
-
+        // Fire event that the slide is loaded
+        this.onLoaded();
+    }
 }
 
-classMixin(Text, Events)
+classMixin(Text, Events);

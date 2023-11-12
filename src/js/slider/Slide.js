@@ -3,19 +3,18 @@ import "wicg-inert";
 import { I18NMixins } from "../language/I18NMixins";
 import Events from "../core/Events";
 import { DOMMixins } from "../dom/DOMMixins";
-import { classMixin, mergeData, trim } from "../core/Util"
-import * as DOM from "../dom/DOM"
-import { Animate } from "../animation/Animate"
-import { easeInSpline } from "../animation/Ease"
-import * as Browser from "../core/Browser"
+import { classMixin, mergeData, trim } from "../core/Util";
+import * as DOM from "../dom/DOM";
+import { Animate } from "../animation/Animate";
+import { easeInSpline } from "../animation/Ease";
+import * as Browser from "../core/Browser";
 import { lookupMediaType } from "../media/MediaType";
-import { Text } from "../media/Media"
+import { Text } from "../media/Media";
 
 export class Slide {
-
     constructor(data, options, title_slide, language) {
         if (language) {
-            this.setLanguage(language)
+            this.setLanguage(language);
         }
 
         // DOM Elements
@@ -24,7 +23,7 @@ export class Slide {
             scroll_container: {},
             background: {},
             content_container: {},
-            content: {}
+            content: {},
         };
 
         // Components
@@ -35,7 +34,7 @@ export class Slide {
 
         // State
         this._state = {
-            loaded: false
+            loaded: false,
         };
 
         this.has = {
@@ -46,9 +45,9 @@ export class Slide {
             background: {
                 image: false,
                 color: false,
-                color_value: ""
-            }
-        }
+                color_value: "",
+            },
+        };
 
         this.has.title = title_slide;
 
@@ -61,7 +60,7 @@ export class Slide {
             location: null,
             text: null,
             media: null,
-            autolink: true
+            autolink: true,
         };
 
         // Options
@@ -73,7 +72,7 @@ export class Slide {
             width: 600,
             height: 600,
             skinny_size: 650,
-            media_name: ""
+            media_name: "",
         };
 
         // Actively Displaying
@@ -88,8 +87,6 @@ export class Slide {
 
         this._initLayout();
         this._initEvents();
-
-
     }
 
     /*	Adding, Hiding, Showing etc
@@ -98,13 +95,11 @@ export class Slide {
         this.animator = Animate(this._el.slider_container, {
             left: -(this._el.container.offsetWidth * n) + "px",
             duration: this.options.duration,
-            easing: this.options.ease
+            easing: this.options.ease,
         });
     }
 
-    hide() {
-
-    }
+    hide() {}
 
     setActive(is_active) {
         this.active = is_active;
@@ -113,11 +108,11 @@ export class Slide {
             if (this.data.background) {
                 this.fire("background_change", this.has.background);
             }
-            this._setInteractive(true)
+            this._setInteractive(true);
             this.loadMedia();
         } else {
             this.stopMedia();
-            this._setInteractive(false)
+            this._setInteractive(false);
         }
     }
 
@@ -141,20 +136,21 @@ export class Slide {
             this.options.width = this._el.container.offsetWidth;
         }
 
-        content_width = this.options.width - (this.options.slide_padding_lr * 2);
+        content_width = this.options.width - this.options.slide_padding_lr * 2;
 
-        if (Browser.mobile && (this.options.width <= this.options.skinny_size)) {
+        if (Browser.mobile && this.options.width <= this.options.skinny_size) {
             content_padding_left = 0;
             content_padding_right = 0;
             content_width = this.options.width;
         } else if (layout == "landscape") {
-
         } else if (this.options.width <= this.options.skinny_size) {
             content_padding_left = 50;
             content_padding_right = 50;
-            content_width = this.options.width - content_padding_left - content_padding_right;
+            content_width =
+                this.options.width -
+                content_padding_left -
+                content_padding_right;
         } else {
-
         }
 
         this._el.content.style.paddingLeft = content_padding_left + "px";
@@ -164,21 +160,35 @@ export class Slide {
         if (height) {
             this.options.height = height;
             //this._el.scroll_container.style.height		= this.options.height + "px";
-
         } else {
             this.options.height = this._el.container.offsetHeight;
         }
 
         if (this._media) {
-
             if (!this.has.text && this.has.headline) {
-                this._media.updateDisplay(content_width, (this.options.height - this._text.headlineHeight()), layout);
+                this._media.updateDisplay(
+                    content_width,
+                    this.options.height - this._text.headlineHeight(),
+                    layout
+                );
             } else if (!this.has.text && !this.has.headline) {
-                this._media.updateDisplay(content_width, this.options.height, layout);
+                this._media.updateDisplay(
+                    content_width,
+                    this.options.height,
+                    layout
+                );
             } else if (this.options.width <= this.options.skinny_size) {
-                this._media.updateDisplay(content_width, this.options.height, layout);
+                this._media.updateDisplay(
+                    content_width,
+                    this.options.height,
+                    layout
+                );
             } else {
-                this._media.updateDisplay(content_width / 2, this.options.height, layout);
+                this._media.updateDisplay(
+                    content_width / 2,
+                    this.options.height,
+                    layout
+                );
             }
         }
 
@@ -194,7 +204,7 @@ export class Slide {
         }
 
         if (this._background_media && !this._background_media._state.loaded) {
-            this._background_media.on("loaded", function() {
+            this._background_media.on("loaded", function () {
                 self._updateBackgroundDisplay();
             });
             this._background_media.loadMedia();
@@ -216,7 +226,6 @@ export class Slide {
     }
 
     getFormattedDate() {
-
         if (trim(this.data.display_date).length > 0) {
             return this.data.display_date;
         }
@@ -224,10 +233,14 @@ export class Slide {
 
         if (!this.has.title) {
             if (this.data.end_date) {
-                date_text = " &mdash; " + this.data.end_date.getDisplayDate(this.getLanguage());
+                date_text =
+                    " &mdash; " +
+                    this.data.end_date.getDisplayDate(this.getLanguage());
             }
             if (this.data.start_date) {
-                date_text = this.data.start_date.getDisplayDate(this.getLanguage()) + date_text;
+                date_text =
+                    this.data.start_date.getDisplayDate(this.getLanguage()) +
+                    date_text;
             }
         }
         return date_text;
@@ -235,7 +248,6 @@ export class Slide {
 
     /*	Events
     ================================================== */
-
 
     /*	Private Methods
     ================================================== */
@@ -250,45 +262,70 @@ export class Slide {
         if (this.data.unique_id) {
             this._el.container.id = this.data.unique_id;
         }
-        this._el.scroll_container = DOM.create("div", "tl-slide-scrollable-container", this._el.container);
-        this._el.content_container = DOM.create("div", "tl-slide-content-container", this._el.scroll_container);
-        this._el.content = DOM.create("div", "tl-slide-content", this._el.content_container);
-        this._el.background = DOM.create("div", "tl-slide-background", this._el.container);
+        this._el.container.setAttribute("role", "tabpanel");
+        this._el.container.setAttribute("aria-roledescription", "Slide");
+        this._el.scroll_container = DOM.create(
+            "div",
+            "tl-slide-scrollable-container",
+            this._el.container
+        );
+        this._el.content_container = DOM.create(
+            "div",
+            "tl-slide-content-container",
+            this._el.scroll_container
+        );
+        this._el.content = DOM.create(
+            "div",
+            "tl-slide-content",
+            this._el.content_container
+        );
+        this._el.background = DOM.create(
+            "div",
+            "tl-slide-background",
+            this._el.container
+        );
         // Style Slide Background
         if (this.data.background) {
             if (this.data.background.url) {
                 var media_type = lookupMediaType(this.data.background, true);
                 if (media_type) {
-                    this._background_media = new media_type.cls(this.data.background, { background: 1 });
+                    this._background_media = new media_type.cls(
+                        this.data.background,
+                        { background: 1 }
+                    );
 
                     this.has.background.image = true;
-                    this._el.container.className += ' tl-full-image-background';
+                    this._el.container.className += " tl-full-image-background";
                     this.has.background.color_value = "#000";
                     this._el.background.style.display = "block";
                 }
                 if (this.data.background.alt) {
-                    this._el.background.setAttribute('role', 'img');
-                    this._el.background.setAttribute('aria-label', this.data.background.alt);
+                    this._el.background.setAttribute("role", "img");
+                    this._el.background.setAttribute(
+                        "aria-label",
+                        this.data.background.alt
+                    );
                 }
             }
             if (this.data.background.color) {
                 this.has.background.color = true;
-                this._el.container.className += ' tl-full-color-background';
+                this._el.container.className += " tl-full-color-background";
                 this.has.background.color_value = this.data.background.color;
                 //this._el.container.style.backgroundColor = this.data.background.color;
                 //this._el.background.style.backgroundColor 	= this.data.background.color;
                 //this._el.background.style.display 			= "block";
             }
             if (this.data.background.text_background) {
-                this._el.container.className += ' tl-text-background';
+                this._el.container.className += " tl-text-background";
             }
-
         }
 
-
-
         // Determine Assets for layout and loading
-        if (this.data.media && this.data.media.url && this.data.media.url != "") {
+        if (
+            this.data.media &&
+            this.data.media.url &&
+            this.data.media.url != ""
+        ) {
             this.has.media = true;
         }
         if (this.data.text && this.data.text.text) {
@@ -307,54 +344,67 @@ export class Slide {
             this.options.autolink = this.data.autolink;
 
             // Create a media object using the matched class name
-            this._media = new this.data.media.mediatype.cls(this.data.media, this.options, this.getLanguage());
+            this._media = new this.data.media.mediatype.cls(
+                this.data.media,
+                this.options,
+                this.getLanguage()
+            );
         }
 
         // Create Text
         if (this.has.text || this.has.headline) {
-            this._text = new Text(this.data.text, { title: this.has.title, language: this.getLanguage(), autolink: this.data.autolink });
+            this._text = new Text(this.data.text, {
+                title: this.has.title,
+                language: this.getLanguage(),
+                autolink: this.data.autolink,
+            });
             this._text.addDateText(this.getFormattedDate());
+            this._el.scroll_container.setAttribute(
+                "aria-labeledby",
+                "tl-headline-" + this._text.data.unique_id
+            );
         }
-
-
 
         // Add to DOM
         if (!this.has.text && !this.has.headline && this.has.media) {
-            this._el.container.classList.add('tl-slide-media-only');
+            this._el.container.classList.add("tl-slide-media-only");
             this._media.addTo(this._el.content);
         } else if (this.has.headline && this.has.media && !this.has.text) {
-            this._el.container.classList.add('tl-slide-media-only');
+            this._el.container.classList.add("tl-slide-media-only");
             this._text.addTo(this._el.content);
             this._media.addTo(this._el.content);
         } else if (this.has.text && this.has.media) {
             this._text.addTo(this._el.content);
             this._media.addTo(this._el.content);
         } else if (this.has.text || this.has.headline) {
-            this._el.container.classList.add('tl-slide-text-only');
+            this._el.container.classList.add("tl-slide-text-only");
             this._text.addTo(this._el.content);
         }
 
         // Fire event that the slide is loaded
         this.onLoaded();
-
     }
 
-    _initEvents() {
-
-    }
+    _initEvents() {}
 
     _updateBackgroundDisplay() {
         if (this._background_media && this._background_media._state.loaded) {
-            this._el.background.style.backgroundImage = "url('" + this._background_media.getImageURL(this.options.width, this.options.height) + "')";
+            this._el.background.style.backgroundImage =
+                "url('" +
+                this._background_media.getImageURL(
+                    this.options.width,
+                    this.options.height
+                ) +
+                "')";
         }
     }
 
     _setInteractive(is_interactive) {
         if (is_interactive) {
-            this._el.container.removeAttribute('inert');
+            this._el.container.removeAttribute("inert");
         } else {
-            this._el.container.setAttribute('inert', true);
+            this._el.container.setAttribute("inert", true);
         }
     }
 }
-classMixin(Slide, I18NMixins, Events, DOMMixins)
+classMixin(Slide, I18NMixins, Events, DOMMixins);

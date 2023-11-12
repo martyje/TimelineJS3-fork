@@ -1,21 +1,19 @@
-import { classMixin, unlinkify, mergeData } from "../core/Util"
-import Events from "../core/Events"
-import { DOMMixins } from "../dom/DOMMixins"
-import * as Browser from "../core/Browser"
+import { classMixin, unlinkify, mergeData } from "../core/Util";
+import Events from "../core/Events";
+import { DOMMixins } from "../dom/DOMMixins";
+import * as Browser from "../core/Browser";
 import { easeInSpline } from "../animation/Ease";
-import * as DOM from "../dom/DOM"
+import * as DOM from "../dom/DOM";
 
 /**
- * A TimeEra represents a span of time marked along the edge of the time 
- * slider. It must have a 
+ * A TimeEra represents a span of time marked along the edge of the time
+ * slider. It must have a
  */
 export class TimeEra {
     constructor(start_date, end_date, headline, options) {
-
-
-        this.start_date = start_date
-        this.end_date = end_date
-        this.headline = headline
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.headline = headline;
 
         // DOM Elements
         this._el = {
@@ -23,7 +21,7 @@ export class TimeEra {
             background: {},
             content_container: {},
             content: {},
-            text: {}
+            text: {},
         };
 
         // Components
@@ -31,7 +29,7 @@ export class TimeEra {
 
         // State
         this._state = {
-            loaded: false
+            loaded: false,
         };
 
         // Options
@@ -40,7 +38,7 @@ export class TimeEra {
             ease: easeInSpline,
             width: 600,
             height: 600,
-            marker_width_min: 100
+            marker_width_min: 100,
         };
 
         // Actively Displaying
@@ -57,23 +55,15 @@ export class TimeEra {
 
         this._initLayout();
         this._initEvents();
-
-
     }
 
     /*	Adding, Hiding, Showing etc
     ================================================== */
-    show() {
+    show() {}
 
-    }
+    hide() {}
 
-    hide() {
-
-    }
-
-    setActive(is_active) {
-
-    }
+    setActive(is_active) {}
 
     addTo(container) {
         container.appendChild(this._el.container);
@@ -96,7 +86,6 @@ export class TimeEra {
     }
 
     getEndTime() {
-
         if (this.end_date) {
             return this.end_date.getTime();
         } else {
@@ -127,9 +116,8 @@ export class TimeEra {
             } else {
                 this._text.className = "tl-headline";
             }
-            this._text.style.height = (text_lines * text_line_height) + "px";
+            this._text.style.height = text_lines * text_line_height + "px";
         }
-
     }
 
     setWidth(w) {
@@ -138,13 +126,15 @@ export class TimeEra {
 
             if (w > this.options.marker_width_min) {
                 this._el.content_container.style.width = w + "px";
-                this._el.content_container.className = "tl-timeera-content-container tl-timeera-content-container-long";
+                this._el.content_container.className =
+                    "tl-timeera-content-container tl-timeera-content-container-long";
             } else {
-                this._el.content_container.style.width = this.options.marker_width_min + "px";
-                this._el.content_container.className = "tl-timeera-content-container";
+                this._el.content_container.style.width =
+                    this.options.marker_width_min + "px";
+                this._el.content_container.className =
+                    "tl-timeera-content-container";
             }
         }
-
     }
 
     setClass(n) {
@@ -155,17 +145,19 @@ export class TimeEra {
         this.setPosition({ top: n });
 
         if (remainder < 56) {
-            this._el.content_container.remove("tl-timeera-content-container-small");
+            this._el.content_container.remove(
+                "tl-timeera-content-container-small"
+            );
         }
     }
 
     setColor(color_num) {
-        this._el.container.className = 'tl-timeera tl-timeera-color' + color_num;
+        this._el.container.className =
+            "tl-timeera tl-timeera-color" + color_num;
     }
 
     /*	Events
     ================================================== */
-
 
     /*	Private Methods
     ================================================== */
@@ -175,16 +167,26 @@ export class TimeEra {
 
         if (this.end_date) {
             this.has_end_date = true;
-            this._el.container.className = 'tl-timeera tl-timeera-with-end';
+            this._el.container.className = "tl-timeera tl-timeera-with-end";
         }
 
-        this._el.content_container = DOM.create("div", "tl-timeera-content-container", this._el.container);
+        this._el.content_container = DOM.create(
+            "div",
+            "tl-timeera-content-container",
+            this._el.container
+        );
 
-        this._el.background = DOM.create("div", "tl-timeera-background", this._el.content_container);
+        this._el.background = DOM.create(
+            "div",
+            "tl-timeera-background",
+            this._el.content_container
+        );
 
-        this._el.content = DOM.create("div", "tl-timeera-content", this._el.content_container);
-
-
+        this._el.content = DOM.create(
+            "div",
+            "tl-timeera-content",
+            this._el.content_container
+        );
 
         // Text
         this._el.text = DOM.create("div", "tl-timeera-text", this._el.content);
@@ -193,20 +195,14 @@ export class TimeEra {
             this._text.innerHTML = unlinkify(this.headline);
         }
 
-
-
         // Fire event that the slide is loaded
         this.onLoaded();
-
     }
 
-    _initEvents() {
-
-    }
+    _initEvents() {}
 
     // Update Display
     _updateDisplay(width, height, layout) {
-
         if (width) {
             this.options.width = width;
         }
@@ -214,9 +210,7 @@ export class TimeEra {
         if (height) {
             this.options.height = height;
         }
-
     }
-
 }
 
-classMixin(TimeEra, Events, DOMMixins)
+classMixin(TimeEra, Events, DOMMixins);

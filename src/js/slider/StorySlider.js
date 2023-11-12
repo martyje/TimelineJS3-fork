@@ -1,21 +1,27 @@
 import { I18NMixins } from "../language/I18NMixins";
 import Events from "../core/Events";
-import { easeInOutQuint } from "../animation/Ease"
-import { classMixin, mergeData, unique_ID, findArrayNumberByUniqueID, hexToRgb, trace } from "../core/Util"
-import { Animate } from "../animation/Animate"
-import * as DOM from "../dom/DOM"
-import { DOMEvent } from "../dom/DOMEvent"
-import * as Browser from "../core/Browser"
+import { easeInOutQuint } from "../animation/Ease";
+import {
+    classMixin,
+    mergeData,
+    unique_ID,
+    findArrayNumberByUniqueID,
+    hexToRgb,
+    trace,
+} from "../core/Util";
+import { Animate } from "../animation/Animate";
+import * as DOM from "../dom/DOM";
+import { DOMEvent } from "../dom/DOMEvent";
+import * as Browser from "../core/Browser";
 import Swipable from "../ui/Swipable";
-import Message from "../ui/Message"
-import { Slide } from "./Slide"
-import { SlideNav } from "./SlideNav"
+import Message from "../ui/Message";
+import { Slide } from "./Slide";
+import { SlideNav } from "./SlideNav";
 
 export class StorySlider {
     constructor(elem, data, options, language) {
-
         if (language) {
-            this.setLanguage(language)
+            this.setLanguage(language);
         }
 
         // DOM ELEMENTS
@@ -24,7 +30,7 @@ export class StorySlider {
             background: {},
             slider_container_mask: {},
             slider_container: {},
-            slider_item_container: {}
+            slider_item_container: {},
         };
 
         this._nav = {};
@@ -47,7 +53,7 @@ export class StorySlider {
         this._message;
 
         // Current Slide
-        this.current_id = '';
+        this.current_id = "";
 
         // Data Object
         this.data = {};
@@ -66,11 +72,11 @@ export class StorySlider {
             ease: easeInOutQuint,
             // interaction
             dragging: true,
-            trackResize: true
+            trackResize: true,
         };
 
         // Main element ID
-        if (typeof elem === 'object') {
+        if (typeof elem === "object") {
             this._el.container = elem;
             this.options.id = unique_ID(6, "tl");
         } else {
@@ -88,7 +94,6 @@ export class StorySlider {
         // Merge Data and Options
         mergeData(this.options, options);
         mergeData(this.data, data);
-
     }
 
     init() {
@@ -107,8 +112,8 @@ export class StorySlider {
     ================================================== */
     _addSlide(slide) {
         slide.addTo(this._el.slider_item_container);
-        slide.on('added', this._onSlideAdded, this);
-        slide.on('background_change', this._onBackgroundChange, this);
+        slide.on("added", this._onSlideAdded, this);
+        slide.on("background_change", this._onBackgroundChange, this);
     }
 
     _createSlide(d, title_slide, n) {
@@ -132,8 +137,8 @@ export class StorySlider {
 
     _removeSlide(slide) {
         slide.removeFrom(this._el.slider_item_container);
-        slide.off('added', this._onSlideRemoved, this);
-        slide.off('background_change', this._onBackgroundChange);
+        slide.off("added", this._onSlideRemoved, this);
+        slide.off("background_change", this._onBackgroundChange);
     }
 
     _destroySlide(n) {
@@ -143,7 +148,7 @@ export class StorySlider {
 
     _findSlideIndex(n) {
         var _n = n;
-        if (typeof n == 'string' || n instanceof String) {
+        if (typeof n == "string" || n instanceof String) {
             _n = findArrayNumberByUniqueID(n, this._slides, "unique_id");
         }
         return _n;
@@ -154,7 +159,7 @@ export class StorySlider {
     updateDisplay(width, height, animate, layout) {
         var nav_pos, _layout;
 
-        if (typeof layout === 'undefined') {
+        if (typeof layout === "undefined") {
             _layout = this.options.layout;
         } else {
             _layout = layout;
@@ -177,22 +182,26 @@ export class StorySlider {
         this.slide_spacing = this.options.width * 2;
 
         // position navigation
-        nav_pos = (this.options.height / 2);
+        nav_pos = this.options.height / 2;
         this._nav.next.setPosition({ top: nav_pos });
         this._nav.previous.setPosition({ top: nav_pos });
 
-
         // Position slides
         for (var i = 0; i < this._slides.length; i++) {
-            this._slides[i].updateDisplay(this.options.width, this.options.height, _layout);
-            this._slides[i].setPosition({ left: (this.slide_spacing * i), top: 0 });
-
-        };
+            this._slides[i].updateDisplay(
+                this.options.width,
+                this.options.height,
+                _layout
+            );
+            this._slides[i].setPosition({
+                left: this.slide_spacing * i,
+                top: 0,
+            });
+        }
 
         // Go to the current slide
         this.goToId(this.current_id, true, true);
     }
-
 
     // Create a slide
     createSlide(d, n) {
@@ -246,14 +255,15 @@ export class StorySlider {
             }
 
             if (fast) {
-                this._el.slider_container.style.left = -(this.slide_spacing * n) + "px";
+                this._el.slider_container.style.left =
+                    -(this.slide_spacing * n) + "px";
                 this._onSlideChange(displayupdate);
             } else {
                 this.animator = Animate(this._el.slider_container, {
                     left: -(this.slide_spacing * n) + "px",
                     duration: this.options.duration,
                     easing: this.options.ease,
-                    complete: this._onSlideChange(displayupdate)
+                    complete: this._onSlideChange(displayupdate),
                 });
             }
 
@@ -275,7 +285,7 @@ export class StorySlider {
             }
 
             // Preload Slides
-            this.preloadTimer = setTimeout(function() {
+            this.preloadTimer = setTimeout(function () {
                 self.preloadSlides(n);
             }, this.options.duration);
         }
@@ -306,7 +316,7 @@ export class StorySlider {
 
     next() {
         var n = this._findSlideIndex(this.current_id);
-        if ((n + 1) < (this._slides.length)) {
+        if (n + 1 < this._slides.length) {
             this.goTo(n + 1);
         } else {
             this.goTo(n);
@@ -323,7 +333,6 @@ export class StorySlider {
     }
 
     showNav(nav_obj, show) {
-
         if (this.options.width <= 500 && Browser.mobile) {
             nav_obj.hide();
         } else {
@@ -332,46 +341,54 @@ export class StorySlider {
             } else {
                 nav_obj.hide();
             }
-
         }
     }
 
-
-
     changeBackground(bg) {
-            var bg_color = { r: 256, g: 256, b: 256 },
-                bg_color_rgb;
+        var bg_color = { r: 256, g: 256, b: 256 },
+            bg_color_rgb;
 
-            if (bg.color_value && bg.color_value != "") {
-                bg_color = hexToRgb(bg.color_value);
-                if (!bg_color) {
-                    trace("Invalid color value " + bg.color_value);
-                    bg_color = this.options.default_bg_color;
-                }
-            } else {
+        if (bg.color_value && bg.color_value != "") {
+            bg_color = hexToRgb(bg.color_value);
+            if (!bg_color) {
+                trace("Invalid color value " + bg.color_value);
                 bg_color = this.options.default_bg_color;
-                bg.color_value = "rgb(" + bg_color.r + " , " + bg_color.g + ", " + bg_color.b + ")";
             }
-
-            bg_color_rgb = bg_color.r + "," + bg_color.g + "," + bg_color.b;
-            this._el.background.style.backgroundImage = "none";
-
-
-            if (bg.color_value) {
-                this._el.background.style.backgroundColor = bg.color_value;
-            } else {
-                this._el.background.style.backgroundColor = "transparent";
-            }
-
-            if (bg_color.r < 255 || bg_color.g < 255 || bg_color.b < 255 || bg.image) {
-                this._nav.next.setColor(true);
-                this._nav.previous.setColor(true);
-            } else {
-                this._nav.next.setColor(false);
-                this._nav.previous.setColor(false);
-            }
+        } else {
+            bg_color = this.options.default_bg_color;
+            bg.color_value =
+                "rgb(" +
+                bg_color.r +
+                " , " +
+                bg_color.g +
+                ", " +
+                bg_color.b +
+                ")";
         }
-        /*	Private Methods
+
+        bg_color_rgb = bg_color.r + "," + bg_color.g + "," + bg_color.b;
+        this._el.background.style.backgroundImage = "none";
+
+        if (bg.color_value) {
+            this._el.background.style.backgroundColor = bg.color_value;
+        } else {
+            this._el.background.style.backgroundColor = "transparent";
+        }
+
+        if (
+            bg_color.r < 255 ||
+            bg_color.g < 255 ||
+            bg_color.b < 255 ||
+            bg.image
+        ) {
+            this._nav.next.setColor(true);
+            this._nav.previous.setColor(true);
+        } else {
+            this._nav.next.setColor(false);
+            this._nav.previous.setColor(false);
+        }
+    }
+    /*	Private Methods
         ================================================== */
 
     // Update Display
@@ -381,32 +398,61 @@ export class StorySlider {
         var _layout = this.options.layout;
 
         for (var i = 0; i < this._slides.length; i++) {
-            this._slides[i].updateDisplay(this.options.width, this.options.height, _layout);
-            this._slides[i].setPosition({ left: (this.slide_spacing * i), top: 0 });
-        };
+            this._slides[i].updateDisplay(
+                this.options.width,
+                this.options.height,
+                _layout
+            );
+            this._slides[i].setPosition({
+                left: this.slide_spacing * i,
+                top: 0,
+            });
+        }
 
         this.goToId(this.current_id, true, false);
     }
 
-
     /*	Init
     ================================================== */
     _initLayout() {
-
-        this._el.container.classList.add('tl-storyslider');
+        this._el.container.classList.add("tl-storyslider");
 
         // Create Navigation
-        this._nav.previous = new SlideNav({ title: "Previous", description: "description" }, { direction: "previous" }, this._el.container);
-        this._nav.next = new SlideNav({ title: "Next", description: "description" }, { direction: "next" }, this._el.container);
+        this._nav.previous = new SlideNav(
+            { title: "Previous", description: "description" },
+            { direction: "previous" },
+            this._el.container
+        );
+        this._nav.next = new SlideNav(
+            { title: "Next", description: "description" },
+            { direction: "next" },
+            this._el.container
+        );
 
         // Create Layout
-        this._el.slider_container_mask = DOM.create('div', 'tl-slider-container-mask', this._el.container);
-        this._el.background = DOM.create('div', 'tl-slider-background tl-animate', this._el.container);
-        this._el.slider_container = DOM.create('div', 'tl-slider-container tlanimate', this._el.slider_container_mask);
-        this._el.slider_item_container = DOM.create('div', 'tl-slider-item-container', this._el.slider_container);
+        this._el.slider_container_mask = DOM.create(
+            "div",
+            "tl-slider-container-mask",
+            this._el.container
+        );
+        this._el.background = DOM.create(
+            "div",
+            "tl-slider-background tl-animate",
+            this._el.container
+        );
+        this._el.slider_container = DOM.create(
+            "div",
+            "tl-slider-container tlanimate",
+            this._el.slider_container_mask
+        );
+        this._el.slider_item_container = DOM.create(
+            "div",
+            "tl-slider-item-container",
+            this._el.slider_container
+        );
 
         // Add aria-live polite to slide_container
-        this._el.slider_container.setAttribute('aria-live', 'polite');
+        this._el.slider_container.setAttribute("aria-live", "polite");
 
         // Update Size
         this.options.width = this._el.container.offsetWidth;
@@ -416,39 +462,47 @@ export class StorySlider {
 
         if (Browser.touch) {
             //this._el.slider_touch_mask = DOM.create('div', 'tl-slider-touch-mask', this._el.slider_container_mask);
-            this._swipable = new Swipable(this._el.slider_container_mask, this._el.slider_container, {
-                enable: { x: true, y: false },
-                snap: true
-            });
+            this._swipable = new Swipable(
+                this._el.slider_container_mask,
+                this._el.slider_container,
+                {
+                    enable: { x: true, y: false },
+                    snap: true,
+                }
+            );
             this._swipable.enable();
 
             // Message
-            this._message = new Message(this._el.container, {
+            this._message = new Message(
+                this._el.container,
+                {
                     message_class: "tl-message-full",
-                    message_icon_class: "tl-icon-swipe-left"
+                    message_icon_class: "tl-icon-swipe-left",
                 },
-                this.getLanguage());
+                this.getLanguage()
+            );
             this._message.updateMessage(this._("swipe_to_navigate"));
             this._message.addTo(this._el.container);
         }
-
     }
 
     _initEvents() {
-        this._nav.next.on('clicked', this._onNavigation, this);
-        this._nav.previous.on('clicked', this._onNavigation, this);
+        this._nav.next.on("clicked", this._onNavigation, this);
+        this._nav.previous.on("clicked", this._onNavigation, this);
 
         if (this._message) {
-            this._message.on('clicked', this._onMessageClick, this);
+            this._message.on("clicked", this._onMessageClick, this);
         }
 
         if (this._swipable) {
-            this._swipable.on('swipe_left', this._onNavigation, this);
-            this._swipable.on('swipe_right', this._onNavigation, this);
-            this._swipable.on('swipe_nodirection', this._onSwipeNoDirection, this);
+            this._swipable.on("swipe_left", this._onNavigation, this);
+            this._swipable.on("swipe_right", this._onNavigation, this);
+            this._swipable.on(
+                "swipe_nodirection",
+                this._onSwipeNoDirection,
+                this
+            );
         }
-
-
     }
 
     _initData() {
@@ -476,7 +530,6 @@ export class StorySlider {
     }
 
     _onNavigation(e) {
-
         if (e.direction == "next" || e.direction == "left") {
             this.next();
         } else if (e.direction == "previous" || e.direction == "right") {
@@ -486,7 +539,7 @@ export class StorySlider {
     }
 
     _onSlideAdded(e) {
-        trace("slideadded")
+        trace("slideadded");
         this.fire("slideAdded", this.data);
     }
 
@@ -500,9 +553,7 @@ export class StorySlider {
         }
     }
 
-    _onMouseClick(e) {
-
-    }
+    _onMouseClick(e) {}
 
     _fireMouseEvent(e) {
         if (!this._loaded) {
@@ -510,27 +561,30 @@ export class StorySlider {
         }
 
         var type = e.type;
-        type = (type === 'mouseenter' ? 'mouseover' : (type === 'mouseleave' ? 'mouseout' : type));
+        type =
+            type === "mouseenter"
+                ? "mouseover"
+                : type === "mouseleave"
+                ? "mouseout"
+                : type;
 
         if (!this.hasEventListeners(type)) {
             return;
         }
 
-        if (type === 'contextmenu') {
+        if (type === "contextmenu") {
             DOMEvent.preventDefault(e);
         }
 
         this.fire(type, {
             latlng: "something", //this.mouseEventToLatLng(e),
-            layerPoint: "something else" //this.mouseEventToLayerPoint(e)
+            layerPoint: "something else", //this.mouseEventToLayerPoint(e)
         });
     }
 
     _onLoaded() {
         this.fire("loaded", this.data);
     }
-
-
 }
 
-classMixin(StorySlider, I18NMixins, Events)
+classMixin(StorySlider, I18NMixins, Events);
