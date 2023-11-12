@@ -99,11 +99,14 @@ export class TimeMarker {
         } else if (this.active) {
             this._el.container.className = "tl-timemarker tl-timemarker-active";
         } else if (this.has_end_date) {
-            this._el.container.className =
-                "tl-timemarker tl-timemarker-with-end";
+            this._el.container.className = "tl-timemarker tl-timemarker-active";
         } else {
-            this._el.container.className = "tl-timemarker";
+            this._el.container.className = "tl-timemarker tl-timemarker-active";
         }
+
+        if (this.active)
+            this._el.content_container.setAttribute("aria-selected", "true");
+        else this._el.content_container.setAttribute("aria-selected", "false");
 
         this._el.container.ariaLabel = this.ariaLabel;
         if (this.active) {
@@ -254,7 +257,7 @@ export class TimeMarker {
     }
 
     _onMarkerKeydown(e) {
-        if (/Space|Enter/.test(e.code)) {
+        if (/Right|Left/.test(e.code)) {
             this.fire("markerclick", { unique_id: this.data.unique_id });
         }
     }
@@ -295,12 +298,12 @@ export class TimeMarker {
             "tl-timemarker-content-container",
             this._el.container
         );
-        //TODO NEXT: connect the panel id
         this._el.content_container.setAttribute("role", "tab");
         this._el.content_container.setAttribute(
             "aria-controls",
-            "the panel Id"
+            this.data.unique_id
         );
+        this._el.content_container.setAttribute("tabindex", -1);
 
         this._el.content = DOM.create(
             "div",
