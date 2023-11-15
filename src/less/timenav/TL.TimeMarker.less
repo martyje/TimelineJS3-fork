@@ -113,7 +113,7 @@
 	================================================== */
     .tl-timemarker-content-container {
         position: absolute;
-        background-color: @marker-color;
+        background-color: white;
         border: 0;
         border-top-left-radius: @time-marker-border-radius;
         border-top-right-radius: @time-marker-border-radius;
@@ -129,8 +129,8 @@
         .property-animation(width, @animation-duration, @animation-ease);
         .animation-timing-cubic-bezier();
         box-sizing: border-box;
-        border: 1px solid @marker-outline-color;
-        box-shadow: 1px 1px 1px @color-background;
+        border: 2px solid black !important;
+        //box-shadow: 1px 1px 1px @color-background;
 
         .tl-timemarker-content {
             position: relative;
@@ -160,7 +160,7 @@
                     overflow: hidden;
                     font-weight: normal;
                     margin: 0;
-                    color: @marker-text-color;
+                    color: black;
                     position: relative;
                     &.tl-headline-fadeout {
                         &:after {
@@ -334,7 +334,7 @@
         .tl-timemarker-timespan {
             //background-color: fadeout(@color-theme, 85%);
             //background-color: fadeout(@color-foreground, 85%);
-            background-color: fadeout(@color-background, 50%);
+            background-color: yellow;
             z-index: 8;
             .tl-timemarker-timespan-content {
                 //background-color: @color-theme;
@@ -359,7 +359,6 @@
         .tl-timemarker-content-container {
             &[aria-selected="true"] {
                 background-color: yellow;
-                border: solid 3px red;
             }
             //background-color:@color-theme;
             background-color: @color-background;
